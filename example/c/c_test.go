@@ -3,7 +3,7 @@ package c_test
 import (
 	"testing"
 
-	"github.com/Warashi/deptest/testdata/c"
+	"github.com/Warashi/deptest/example/c"
 )
 
 func TestC(*testing.T) {
