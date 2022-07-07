@@ -1,9 +1,12 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"log"
+	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/Warashi/deptest"
@@ -15,6 +18,10 @@ func main() {
 	filename := flag.Arg(0)
 	profile, err := cover.ParseProfiles(filename)
 	if err != nil {
+		if errors.Is(os.ErrNotExist, err) {
+			fmt.Println(filepath.Dir(filename))
+			return
+		}
 		log.Fatalf("cover.ParseProfiles(%q): %v", filename, err)
 	}
 
