@@ -14,7 +14,7 @@ all: $(PROFILES)
 .PHONY: update-testdeps
 update-testdeps: $(self)
 
-$(self): $(PROFILES) $(CODES)
+$(self): $(CODES)
 	$(DEPTEST) -module $(MODULE) $(PROFILES) > $(self)
 
 $(PROFILES): %/$(PROFILE_NAME):
