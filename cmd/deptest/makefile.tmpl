@@ -10,7 +10,7 @@ PROFILES := $(patsubst %/,%/$(PROFILE_NAME),$(DIRS))
 MODULE := $(shell $(GO) list -m)
 
 .PHONY: all
-all: $(PROFILES)
+all: $(PROFILE_NAME)
 
 .PHONY: update-testdeps
 update-testdeps:
