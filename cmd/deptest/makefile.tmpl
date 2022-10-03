@@ -4,10 +4,9 @@ PROFILE_NAME ?= cover.out
 DEPTEST ?= $(GO) run github.com/Warashi/deptest/cmd/deptest@latest
 GOCOVMERGE ?= $(GO) run github.com/wadey/gocovmerge@latest
 
-CODES := $(shell find . -name *.go)
-DIRS := $(sort $(dir $(CODES)))
-PROFILES := $(patsubst %/,%/$(PROFILE_NAME),$(DIRS))
 MODULE := $(shell $(GO) list -m)
+PACKAGES := $(sort $(shell $(GO) list ./...))
+PROFILES := $(patsubst $(MODULE)/%,%/$(PROFILE_NAME),$(PACKAGES))
 
 .PHONY: all
 all: $(PROFILE_NAME)
