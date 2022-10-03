@@ -1,24 +1,63 @@
 package main
 
 import (
+	_ "embed"
 	"flag"
-	"fmt"
+	"log"
+	"os"
 	"path/filepath"
 	"strings"
+	"text/template"
+
+	"golang.org/x/exp/slices"
+	"golang.org/x/tools/cover"
 
 	"github.com/Warashi/deptest"
-	"golang.org/x/tools/cover"
 )
+
+var module string
+
+//go:embed makefile.tmpl
+var tmpl string
+
+func init() {
+	flag.StringVar(&module, "module", "", "module name")
+}
+
+type Template struct {
+	Profile string
+	Deps    []string
+}
 
 func main() {
 	flag.Parse()
-	filename := flag.Arg(0)
-	profile, err := cover.ParseProfiles(filename)
-	if err != nil {
-		fmt.Println(filepath.Dir(filename))
-		return
+
+	t := make([]Template, 0, flag.NArg())
+	for _, arg := range flag.Args() {
+		profile, err := cover.ParseProfiles(arg)
+		var files []string
+		files, err = filepath.Glob(filepath.Dir(arg) + "/*.go")
+		if err != nil {
+			log.Fatalln(err)
+		}
+
+		deps := deptest.Files(profile)
+		for i := range deps {
+			deps[i] = strings.TrimPrefix(deps[i], module+"/")
+		}
+
+		files = append(files, deps...)
+		slices.Sort(files)
+		files = slices.Compact(files)
+
+		t = append(t, Template{Profile: arg, Deps: files})
 	}
 
-	packages := deptest.Packages(profile)
-	fmt.Println(strings.Join(packages, "\n"))
+	tmpl, err := template.New("makefile").Parse(tmpl)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	if err := tmpl.Execute(os.Stdout, t); err != nil {
+		log.Fatalln(err)
+	}
 }
