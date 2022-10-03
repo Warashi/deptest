@@ -12,9 +12,7 @@ MODULE := $(shell $(GO) list -m)
 all: $(PROFILES)
 
 .PHONY: update-testdeps
-update-testdeps: $(self)
-
-$(self): $(CODES)
+update-testdeps:
 	$(DEPTEST) -module $(MODULE) $(PROFILES) > $(self).tmp
 	mv $(self).tmp $(self)
 

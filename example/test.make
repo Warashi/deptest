@@ -12,10 +12,9 @@ MODULE := $(shell $(GO) list -m)
 all: $(PROFILES)
 
 .PHONY: update-testdeps
-update-testdeps: $(self)
-
-$(self): $(CODES)
-	$(DEPTEST) -module $(MODULE) $(PROFILES) > $(self)
+update-testdeps:
+	$(DEPTEST) -module $(MODULE) $(PROFILES) > $(self).tmp
+	mv $(self).tmp $(self)
 
 $(PROFILES): %/$(PROFILE_NAME):
 	$(GO) test -coverpkg=./... -coverprofile=./$@ ./$(dir $@)
