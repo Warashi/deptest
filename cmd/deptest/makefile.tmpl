@@ -3,6 +3,7 @@
 self := $(lastword $(MAKEFILE_LIST))
 GO ?= go
 PROFILE_NAME ?= cover.out
+TEST_COMMAND ?= $(GO) test
 DEPTEST ?= $(GO) run github.com/Warashi/deptest/cmd/deptest@latest
 GOCOVMERGE ?= $(GO) run github.com/wadey/gocovmerge@latest
 
@@ -26,7 +27,8 @@ $(PROFILE_NAME): $(PROFILES)
 	$(GOCOVMERGE) $(PROFILES) > $(PROFILE_NAME)
 
 $(PROFILES): %/$(PROFILE_NAME):
-	$(GO) test -covermode=atomic -coverpkg=./... -coverprofile=./$@ ./$(dir $@)
+	$(TEST_COMMAND) -covermode=atomic -coverpkg=./... -coverprofile=./$@ ./$(dir $@)
+
 {{ range . }}
 {{ .Profile }}: {{ range .Deps }}{{.}} {{ end -}}
 {{ end }}
