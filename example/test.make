@@ -7,7 +7,7 @@ TEST_COMMAND ?= $(GO) test
 DEPTEST ?= $(GO) run github.com/Warashi/deptest/cmd/deptest@latest
 GOCOVMERGE ?= $(GO) run github.com/wadey/gocovmerge@latest
 
-MODULE := $(shell $(GO) list -m)
+MODULE := $(shell GOWORK=off $(GO) list -m)
 PACKAGES := $(sort $(shell $(GO) list ./...))
 PROFILES := $(patsubst $(MODULE)/%,%/$(PROFILE_NAME),$(PACKAGES))
 
