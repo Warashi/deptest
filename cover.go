@@ -2,13 +2,13 @@ package deptest
 
 import (
 	"path/filepath"
+	"slices"
 
-	"golang.org/x/exp/slices"
 	"golang.org/x/tools/cover"
 )
 
 func Files(profiles []*cover.Profile) []string {
-files := make([]string, 0, len(profiles))
+	files := make([]string, 0, len(profiles))
 	for _, p := range profiles {
 		files = append(files, p.FileName)
 	}

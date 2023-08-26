@@ -6,10 +6,10 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"text/template"
 
-	"golang.org/x/exp/slices"
 	"golang.org/x/tools/cover"
 
 	"github.com/Warashi/deptest"
@@ -46,7 +46,13 @@ func main() {
 			deps[i] = strings.TrimPrefix(deps[i], module+"/")
 		}
 
-		files = append(files, deps...)
+		files = slices.Grow(files, len(deps))
+		for _, dep := range deps {
+			if _, err := os.Stat(dep); err == nil {
+				files = append(files, dep)
+			}
+		}
+
 		slices.Sort(files)
 		files = slices.Compact(files)
 
